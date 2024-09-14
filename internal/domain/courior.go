@@ -11,7 +11,3 @@ type COURIOR struct {
 	Status     CouriorStatus
 	ExpiresAt  time.Time
 }
-
-func (s COURIOR) IsDomain() bool {
-	return true
-}

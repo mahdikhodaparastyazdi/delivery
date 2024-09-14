@@ -21,21 +21,13 @@ func NewDeliveryTransformer() DeliveryTransformer {
 	return DeliveryTransformer{}
 }
 
-func (t DeliveryTransformer) Transform(_ context.Context, tmpl domain.Template) ResponseDelivery {
+func (t DeliveryTransformer) Transform(_ context.Context, tmpl domain.COURIOR) ResponseDelivery {
 	var resp ResponseDelivery
-
-	resp.ID = tmpl.ID
-	resp.UseProviderTemplate = tmpl.UseProviderTemplate
-	resp.ActiveProviderID = tmpl.ActiveProviderID
-	resp.Content = tmpl.Content
-	resp.Code = tmpl.Code
-	resp.Type = string(tmpl.Type)
-	resp.Params = tmpl.Params
 
 	return resp
 }
 
-func (t DeliveryTransformer) TransformMany(ctx context.Context, templates []domain.Template) []ResponseDelivery {
+func (t DeliveryTransformer) TransformMany(ctx context.Context, templates []domain.COURIOR) []ResponseDelivery {
 	var result []ResponseDelivery
 	for _, tm := range templates {
 		transProvider := t.Transform(ctx, tm)

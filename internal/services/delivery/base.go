@@ -3,7 +3,8 @@ package delivery
 import (
 	"context"
 	"delivery/internal/api/rest/requests"
-	tasks "delivery/internal/tasks/send_courior"
+	recieved_task "delivery/internal/tasks/received_courior_status"
+	send_task "delivery/internal/tasks/send_courior"
 )
 
 type deliveryRepository interface {
@@ -13,15 +14,18 @@ type deliveryRepository interface {
 
 type Service struct {
 	deliveryRepository deliveryRepository
-	queue3PL           *tasks.Queue
+	queue3PL           *send_task.Queue
+	queueCore          *recieved_task.Queue
 }
 
 func New(
 	sr deliveryRepository,
-	q3PL *tasks.Queue,
+	q3PL *send_task.Queue,
+	qCore *recieved_task.Queue,
 ) Service {
 	return Service{
 		deliveryRepository: sr,
 		queue3PL:           q3PL,
+		queueCore:          qCore,
 	}
 }

@@ -3,7 +3,6 @@ package courior_resolver
 import (
 	"delivery/internal/config"
 	"delivery/internal/constants"
-	"delivery/internal/domain"
 	"delivery/pkg/couriorproviders"
 	provider1 "delivery/pkg/couriorproviders/provider1"
 	provider2 "delivery/pkg/couriorproviders/provider2"
@@ -22,13 +21,13 @@ func NewResolver(appEnv config.AppEnv, logger log.Logger) Resolver {
 	}
 }
 
-func (r *Resolver) ResolveCouriorProvider(provider domain.Provider, templateID string) (couriorproviders.CouriorSender, error) {
+func (r *Resolver) ResolveCouriorProvider(providerName string, templateID string) (couriorproviders.CouriorSender, error) {
 	var (
 		err    error
 		driver couriorproviders.CouriorSender
 	)
 
-	switch provider.Name {
+	switch providerName {
 	case constants.COURIOR_PROVIDER1:
 		driver = provider1.NewProvider1()
 	case constants.COURIOR_PROVIDER2:

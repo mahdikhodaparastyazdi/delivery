@@ -4,7 +4,7 @@ import (
 	"context"
 	"delivery/internal/config"
 	"delivery/internal/constants"
-	courior_consumer "delivery/internal/consumers/courior_consumer"
+	courior_consumer "delivery/internal/consumers/send_courior_consumer"
 	courior_resolver "delivery/internal/factories/courior_resolver"
 	"delivery/internal/repositories"
 	tasks "delivery/internal/tasks/send_courior"

@@ -12,8 +12,6 @@ type COURIOR struct {
 	Status     string    `gorm:"column:status"`
 	ProviderId uint      `gorm:"column:provider_id"`
 	TemplateID uint      `gorm:"column:template_id"`
-	Provider   Provider  `gorm:"foreignKey:provider_id"`
-	Template   Template  `gorm:"foreignKey:template_id"`
 	CreatedAt  time.Time `gorm:"column:created_at"`
 	UpdatedAt  time.Time `gorm:"column:updated_at"`
 	ExpiredAt  time.Time `gorm:"column:expires_at"`

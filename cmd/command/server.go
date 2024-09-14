@@ -11,7 +11,8 @@ import (
 	clientservice "delivery/internal/services/client"
 	delivery_service "delivery/internal/services/delivery"
 
-	tasks "delivery/internal/tasks/send_courior"
+	received_tasks "delivery/internal/tasks/received_courior_status"
+	send_tasks "delivery/internal/tasks/send_courior"
 	"delivery/pkg/asynq"
 	"fmt"
 
@@ -61,8 +62,9 @@ func (cmd Server) main(ctx context.Context, cfg *config.Config) {
 
 	clientService := clientservice.New(clientRepo)
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
-	Queue3PL := tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
-	deliveryService := delivery_service.New(deliveryRepo, Queue3PL)
+	Queue3PL := send_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	QueueCore := received_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	deliveryService := delivery_service.New(deliveryRepo, Queue3PL, QueueCore)
 
 	deliverTr := transformer.NewDeliveryTransformer()
 

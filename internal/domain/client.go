@@ -6,7 +6,3 @@ type Client struct {
 	Token    string
 	IsActive bool
 }
-
-func (c Client) IsDomain() bool {
-	return true
-}
