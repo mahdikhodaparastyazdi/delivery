@@ -1,5 +1,6 @@
 package constants
 
 const (
-	QUEUE_COURIOR = "COURIOR"
+	SEND_COURIOR     = "COURIOR"
+	RECEIVED_COURIOR = "RECIEVED_COURIOR"
 )

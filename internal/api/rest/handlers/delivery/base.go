@@ -1,4 +1,4 @@
-package template
+package delivery
 
 import (
 	"context"
@@ -19,12 +19,13 @@ type Handler struct {
 	templateTransformer transformer.DeliveryTransformer
 }
 
-func New(templateService deliveryServiceInterface,
+func New(
+	deliveryService deliveryServiceInterface,
 	responseFormatter response_formatter.ResponseFormatter,
 	deliveryTrans transformer.DeliveryTransformer,
 ) Handler {
 	return Handler{
-		deliveryService:     templateService,
+		deliveryService:     deliveryService,
 		responseFormatter:   responseFormatter,
 		templateTransformer: deliveryTrans,
 	}

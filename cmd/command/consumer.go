@@ -7,7 +7,7 @@ import (
 	courior_consumer "delivery/internal/consumers/courior_consumer"
 	courior_resolver "delivery/internal/factories/courior_resolver"
 	"delivery/internal/repositories"
-	"delivery/internal/tasks"
+	tasks "delivery/internal/tasks/send_courior"
 	"delivery/pkg/asynq"
 	"fmt"
 
@@ -69,11 +69,11 @@ func (cmd Consumer) couriorConsumer(ctx context.Context, cfg *config.Config) {
 	couriorConsumer := courior_consumer.New(logger)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:courior:asynq-courior-server")
-	server := asynq.NewServer(logger, cfg.Database.Redis, constants.QUEUE_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
+	server := asynq.NewServer(logger, cfg.Database.Redis, constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:courior:courior-worker")
 	worker := tasks.NewWorker(server, couriorConsumer, logger)
-	if err := worker.StartWorker(constants.QUEUE_COURIOR); err != nil {
+	if err := worker.StartWorker(constants.SEND_COURIOR); err != nil {
 		cmd.logger.Error(err)
 		return
 	}

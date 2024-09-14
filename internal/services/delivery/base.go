@@ -3,6 +3,7 @@ package delivery
 import (
 	"context"
 	"delivery/internal/api/rest/requests"
+	tasks "delivery/internal/tasks/send_courior"
 )
 
 type deliveryRepository interface {
@@ -12,12 +13,15 @@ type deliveryRepository interface {
 
 type Service struct {
 	deliveryRepository deliveryRepository
+	queue3PL           *tasks.Queue
 }
 
 func New(
 	sr deliveryRepository,
+	q3PL *tasks.Queue,
 ) Service {
 	return Service{
 		deliveryRepository: sr,
+		queue3PL:           q3PL,
 	}
 }

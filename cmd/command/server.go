@@ -3,13 +3,15 @@ package command
 import (
 	"context"
 	"delivery/internal/api/rest"
+	delivery_handler "delivery/internal/api/rest/handlers/delivery"
 	"delivery/internal/api/rest/middleware"
 	"delivery/internal/api/rest/transformer"
 	"delivery/internal/config"
 	"delivery/internal/repositories"
 	clientservice "delivery/internal/services/client"
 	delivery_service "delivery/internal/services/delivery"
-	"delivery/internal/tasks"
+
+	tasks "delivery/internal/tasks/send_courior"
 	"delivery/pkg/asynq"
 	"fmt"
 
@@ -58,16 +60,16 @@ func (cmd Server) main(ctx context.Context, cfg *config.Config) {
 	clientRepo := repositories.NewClientRepository(gormDB)
 
 	clientService := clientservice.New(clientRepo)
-	_ = delivery_service.New(deliveryRepo)
-
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
-	_ = tasks.NewQueue(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
-	// logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:api:service:courior-service")
+	Queue3PL := tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	deliveryService := delivery_service.New(deliveryRepo, Queue3PL)
 
-	_ = transformer.NewDeliveryTransformer()
+	deliverTr := transformer.NewDeliveryTransformer()
 
 	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery::api:response-formatter-pkg")
-	_ = response_formatter.NewResponseFormatter(logger)
+	respFormatter := response_formatter.NewResponseFormatter(logger)
+
+	deliveryHandler := delivery_handler.New(deliveryService, respFormatter, deliverTr)
 
 	internalMiddleware := middleware.NewInternalMiddleware(clientService)
 
@@ -75,6 +77,7 @@ func (cmd Server) main(ctx context.Context, cfg *config.Config) {
 	server := rest.New(logger)
 	server.SetupAPIRoutes(
 		internalMiddleware,
+		deliveryHandler,
 	)
 	if err := server.Serve(ctx, fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port)); err != nil {
 		cmd.logger.Fatal(err)

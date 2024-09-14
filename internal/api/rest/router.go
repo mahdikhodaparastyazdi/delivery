@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"delivery/internal/api/rest/handlers/delivery"
 	"delivery/internal/api/rest/handlers/health"
 	"delivery/internal/api/rest/middleware"
 )
@@ -12,6 +13,7 @@ func (s *Server) SetupMonitoringRoutes(healthHandler *health.HealthHandler) {
 
 func (s *Server) SetupAPIRoutes(
 	internalMiddleware middleware.InternalMiddleware,
+	deliveryHandler delivery.Handler,
 ) {
 	r := s.engine
 	{
@@ -19,8 +21,8 @@ func (s *Server) SetupAPIRoutes(
 		{
 			internal := v1.Group("/internal", internalMiddleware.Handle)
 
-			internal.POST("/deliveries")
-			internal.POST("/webhooks/courier-status")
+			internal.POST("/deliveries", deliveryHandler.SendCourior)
+			internal.POST("/webhooks/courier-status", deliveryHandler.ReceiveCouriorStatus)
 		}
 	}
 }

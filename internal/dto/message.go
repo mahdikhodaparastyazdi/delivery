@@ -1,18 +1,15 @@
 package dto
 
-type TemplateType string
+import "time"
 
-const (
-	TemplateTypeRow      TemplateType = "ROW"
-	TemplateTypeTemplate TemplateType = "TEMPLATE"
-)
-
-type Message struct {
-	Id                   uint         `json:"id"`
-	ProviderID           uint         `json:"provider_id"`
-	ProviderName         string       `json:"provider_name"`
-	ProviderTemplateCode string       `json:"provider_template_code"`
-	CouriorType          string       `json:"courior_type"`
-	Type                 TemplateType `json:"type"`
-	Params               []string     `json:"params"`
+type SendCourior struct {
+	ProductID           int       `json:"product_id" validate:"required"`
+	UserID              int       `json:"user_id" validate:"required"`
+	SourceLocation      int       `json:"source_location" validate:"required"`
+	DestinationLocation int       `json:"destination_location" validate:"required"`
+	StartTime           time.Time `json:"start_time" validate:"required"`
+}
+type RecievedStatus struct {
+	CouriorId int64  `json:"courior_id" validate:"required"`
+	Status    string `json:"status" validate:"required"`
 }

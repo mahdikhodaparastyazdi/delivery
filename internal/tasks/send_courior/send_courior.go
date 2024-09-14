@@ -14,44 +14,43 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-func NewTask(msg dto.Message, typeName string, maxRetry int, timeoutInSec time.Duration) (*asynq.Task, error) {
+func NewTask(msg dto.SendCourior, maxRetry int, timeout time.Duration) (*asynq.Task, error) {
 	p, err := json.Marshal(msg)
 	if err != nil {
 		return nil, err
 	}
 
-	return asynq.NewTask(typeName, p, asynq.MaxRetry(maxRetry), asynq.Timeout(timeoutInSec)), nil
+	return asynq.NewTask(constants.SEND_COURIOR, p, asynq.MaxRetry(maxRetry), asynq.Timeout(timeout)), nil
 }
 
 type Queue struct {
-	client       *asynq.Client
-	maxRetry     int
-	timeoutInSec time.Duration
+	client   *asynq.Client
+	maxRetry int
+	timeout  time.Duration
 }
 
-func NewQueue(c *asynq.Client, maxRetry int, timoutInSec time.Duration) *Queue {
+func NewQueue3PL(c *asynq.Client, maxRetry int, timout time.Duration) *Queue {
 	return &Queue{
-		client:       c,
-		maxRetry:     maxRetry,
-		timeoutInSec: timoutInSec,
+		client:   c,
+		maxRetry: maxRetry,
+		timeout:  timout,
 	}
 }
 
-func (q *Queue) Enqueue(msg dto.Message, typeName string) error {
-	t, err := NewTask(msg, typeName, q.maxRetry, q.timeoutInSec)
+func (q *Queue) Enqueue(msg dto.SendCourior) error {
+	t, err := NewTask(msg, q.maxRetry, q.timeout)
 	if err != nil {
 		return fmt.Errorf("failed to create task: %w", err)
 	}
-	_, err = q.client.Enqueue(t, asynq.Queue(typeName))
+	_, err = q.client.Enqueue(t, asynq.Queue(constants.SEND_COURIOR))
 	if err != nil {
 		return fmt.Errorf("asynq enqueue failed: %w", err)
 	}
-
 	return nil
 }
 
 type Consumer interface {
-	Consume(ctx context.Context, msg dto.Message, retry, maxRetry int) error
+	Consume(ctx context.Context, msg dto.SendCourior, retry, maxRetry int) error
 }
 
 type Worker struct {
@@ -79,7 +78,7 @@ func (w *Worker) HandleTask(ctx context.Context, t *asynq.Task) error {
 	retry, _ := asynq.GetRetryCount(ctx)
 	maxRetry, _ := asynq.GetMaxRetry(ctx)
 
-	var p dto.Message
+	var p dto.SendCourior
 	if err := json.Unmarshal(t.Payload(), &p); err != nil {
 		return fmt.Errorf("unmarshalling json: %w", err)
 	}
@@ -90,9 +89,8 @@ func (w *Worker) HandleTask(ctx context.Context, t *asynq.Task) error {
 			return nil
 		}
 		w.logger.Error("failed send courior", log.J{
-			"providerName": p.ProviderName,
-			"error":        err.Error(),
-			"payload":      p,
+			"error":   err.Error(),
+			"payload": p,
 		})
 		return fmt.Errorf("courior task failed: %w", err)
 	}
