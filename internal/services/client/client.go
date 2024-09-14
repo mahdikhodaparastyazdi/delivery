@@ -6,10 +6,5 @@ import (
 )
 
 func (s Service) GetClientByApiKey(ctx context.Context, apiKey string) (domain.Client, error) {
-	client, err := s.clientRepository.GetClientByApiKey(ctx, apiKey)
-	if err != nil {
-		return client, err
-	}
-
-	return client, nil
+	return s.clientRepository.GetClientByApiKey(ctx, apiKey)
 }

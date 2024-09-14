@@ -10,6 +10,6 @@ const (
 	CouriorStatusExpired CouriorStatus = "EXPIRED"
 )
 
-func (n CouriorStatus) String() string {
-	return string(n)
+func (s CouriorStatus) String() string {
+	return string(s)
 }

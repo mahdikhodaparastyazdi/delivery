@@ -27,10 +27,6 @@ func (am InternalMiddleware) respondForbidden(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 }
 
-func (am InternalMiddleware) respondForbiddenForBalance(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Insufficient balance"})
-}
-
 func (am InternalMiddleware) Handle(c *gin.Context) {
 	apiKey := c.GetHeader("ApiKey")
 
@@ -38,13 +34,18 @@ func (am InternalMiddleware) Handle(c *gin.Context) {
 		am.respondForbidden(c)
 		return
 	}
-	_, err := am.clientSvc.GetClientByApiKey(c, apiKey)
+	client, err := am.clientSvc.GetClientByApiKey(c, apiKey)
 	if err != nil {
 		if errors.Is(err, constants.ErrWrongApiKey) {
 			am.respondForbidden(c)
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !client.IsActive {
+		am.respondForbidden(c)
 		return
 	}
 

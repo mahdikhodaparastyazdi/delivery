@@ -20,7 +20,7 @@ func (c Client) TableName() string {
 	return "clients"
 }
 
-func (c Client) ToDomain() domain.Domain {
+func (c Client) ToDomain() domain.Client {
 	return domain.Client{
 		ID:       c.ID,
 		Username: c.Name,

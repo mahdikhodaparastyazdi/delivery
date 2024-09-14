@@ -18,7 +18,7 @@ func (p Provider) TableName() string {
 	return "providers"
 }
 
-func (p Provider) ToDomain() domain.Domain {
+func (p Provider) ToDomain() domain.Provider {
 	return domain.Provider{
 		ID:        p.ID,
 		Name:      p.Name,

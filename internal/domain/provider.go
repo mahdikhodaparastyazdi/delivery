@@ -17,7 +17,3 @@ type Provider struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
-
-func (p Provider) IsDomain() bool {
-	return true
-}

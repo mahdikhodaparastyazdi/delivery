@@ -8,7 +8,7 @@ import (
 	"delivery/internal/config"
 	"delivery/internal/repositories"
 	clientservice "delivery/internal/services/client"
-	courior_service "delivery/internal/services/courior"
+	delivery_service "delivery/internal/services/delivery"
 	"delivery/internal/tasks"
 	"delivery/pkg/asynq"
 	"fmt"
@@ -54,19 +54,19 @@ func (cmd Server) main(ctx context.Context, cfg *config.Config) {
 		cmd.logger.Fatal(fmt.Errorf("mysql migration failed: %w", err))
 	}
 
-	couriorRepo := repositories.NewCouriorRepository(gormDB)
+	deliveryRepo := repositories.NewCouriorRepository(gormDB)
 	clientRepo := repositories.NewClientRepository(gormDB)
 
 	clientService := clientservice.New(clientRepo)
-	_ = courior_service.New(couriorRepo)
+	_ = delivery_service.New(deliveryRepo)
 
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
 	_ = tasks.NewQueue(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
-	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:api:service:courior-service")
+	// logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:api:service:courior-service")
 
-	_ = transformer.NewTemplateTransformer()
+	_ = transformer.NewDeliveryTransformer()
 
-	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery::api:response-formatter-pkg")
+	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery::api:response-formatter-pkg")
 	_ = response_formatter.NewResponseFormatter(logger)
 
 	internalMiddleware := middleware.NewInternalMiddleware(clientService)

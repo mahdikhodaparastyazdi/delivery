@@ -14,11 +14,13 @@ func (s *Server) SetupAPIRoutes(
 	internalMiddleware middleware.InternalMiddleware,
 ) {
 	r := s.engine
-
-	v1 := r.Group("/v1")
 	{
+		v1 := r.Group("/v1")
+		{
+			internal := v1.Group("/internal", internalMiddleware.Handle)
 
-		internal := v1.Group("/internal", internalMiddleware.Handle)
-		internal.POST("/courior/template")
+			internal.POST("/deliveries")
+			internal.POST("/webhooks/courier-status")
+		}
 	}
 }

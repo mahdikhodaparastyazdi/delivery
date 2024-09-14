@@ -23,7 +23,7 @@ func (s COURIOR) TableName() string {
 	return "courior"
 }
 
-func (s COURIOR) ToDomain() domain.Domain {
+func (s COURIOR) ToDomain() domain.COURIOR {
 	return domain.COURIOR{
 		ID:         s.ID,
 		Mobile:     s.Mobile,

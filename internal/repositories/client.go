@@ -30,9 +30,5 @@ func (c clientRepository) GetClientByApiKey(ctx context.Context, apiKey string) 
 		return domain.Client{}, err
 	}
 
-	return client.ToDomain().(domain.Client), nil
-}
-func (c clientRepository) UpdateBalance(ctx context.Context, amount int, clientId uint) error {
-	// TODO: Update Balance
-	return nil
+	return client.ToDomain(), nil
 }

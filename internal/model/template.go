@@ -23,7 +23,7 @@ func (t Template) TableName() string {
 	return "templates"
 }
 
-func (t Template) ToDomain() domain.Domain {
+func (t Template) ToDomain() domain.Template {
 	return domain.Template{
 		ID:                  t.ID,
 		Code:                t.Code,

@@ -1,6 +1,6 @@
 module delivery
 
-go 1.22.5
+go 1.22
 
 require (
 	github.com/getsentry/sentry-go v0.29.0

@@ -15,7 +15,7 @@ func (p ProviderTemplate) TableName() string {
 	return "provider_templates"
 }
 
-func (p ProviderTemplate) ToDomain() domain.Domain {
+func (p ProviderTemplate) ToDomain() domain.ProviderTemplate {
 	return domain.ProviderTemplate{
 		ID:         p.ID,
 		ProviderID: p.ProviderID,
