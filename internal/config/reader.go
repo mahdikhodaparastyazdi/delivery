@@ -27,11 +27,13 @@ func Load() (*Config, error) {
 	appEnv := loadString("APP_ENV")
 	debug := loadBool("APP_DEBUG")
 	cfg := Config{
-		AppEnv:   AppEnv(appEnv),
-		Locale:   loadString("LOCALE"),
-		AppDebug: debug,
-		Tz:       loadString("TZ"),
-		LogLevel: log.LogLevelStr(loadString("LOG_LEVEL")),
+		AppEnv:         AppEnv(appEnv),
+		Locale:         loadString("LOCALE"),
+		AppDebug:       debug,
+		Tz:             loadString("TZ"),
+		CoreBaseUrl:    loadString("CORE_BASE_URL"),
+		CouriorBaseUrl: loadString("COURIOR_BASE_URL"),
+		LogLevel:       log.LogLevelStr(loadString("LOG_LEVEL")),
 		HTTP: HTTP{
 			Host: loadString("API_HTTP_HOST"),
 			Port: loadInt("API_HTTP_PORT"),

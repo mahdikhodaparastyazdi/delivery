@@ -21,7 +21,7 @@ func NewResolver(appEnv config.AppEnv, logger log.Logger) Resolver {
 	}
 }
 
-func (r *Resolver) ResolveCouriorProvider(providerName string, templateID string) (couriorproviders.CouriorSender, error) {
+func (r Resolver) ResolveCouriorProvider(providerName string) (couriorproviders.CouriorSender, error) {
 	var (
 		err    error
 		driver couriorproviders.CouriorSender

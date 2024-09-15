@@ -15,6 +15,8 @@ type LogLevel string
 
 type AppEnv string
 
+var ValidTimeSlots = []int{9, 11, 13, 15, 17, 19, 21}
+
 const (
 	ProductionEnv AppEnv = "production"
 	StageEnv      AppEnv = "stage"
@@ -32,6 +34,8 @@ type (
 		HTTP            HTTP
 		Database        Database
 		Sentry          *sentry.Config
+		CoreBaseUrl     string
+		CouriorBaseUrl  string
 		Tz              string
 		CouriorConsumer CouriorConsumer
 	}

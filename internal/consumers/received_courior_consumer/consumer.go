@@ -7,6 +7,6 @@ import (
 
 type send func(context.Context) error
 
-func (c Consumer) Consume(ctx context.Context, message dto.SendCourior, retry, maxRetry int) error {
+func (c Consumer) Consume(ctx context.Context, message dto.RecievedStatus, retry, maxRetry int) error {
 	return nil
 }

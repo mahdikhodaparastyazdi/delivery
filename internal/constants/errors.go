@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	providerNotFoundErrMsg             = "provider not found"
 	providerIsNotActiveErrMsg          = "provider is not active"
 	templateParamsIsRequiredErrMes     = "template params are required"
 	couriorProviderErrMsg              = "internal request in provider"
@@ -18,17 +17,13 @@ const (
 	wrongApiKeyErrMsg                  = "wrong api key"
 	templateProviderNotDefinedErrMsg   = "provider template not defined"
 	deviceInfoNotfoundErrMsg           = "device info not found"
-	userIsNotInWhiteListMsg            = "user not allowed to receive courior"
 	expiryDateTimeErrMsg               = "expires at can't be for a past time"
-	expiryReachedErrMsg                = "message expires"
 	pushCouriorNotFoundErrMsg          = "push courior not found"
 	couriorNotFoundErrMsg              = "courior not found"
-	backOffRetryErrMsg                 = "backoff from retrying"
 	wrongStatus                        = "wrong status"
 )
 
 var (
-	ErrProviderNotFound             = errors.New(providerNotFoundErrMsg)
 	ErrProviderIsNotActive          = errors.New(providerIsNotActiveErrMsg)
 	ErrTemplateParamsIsRequired     = errors.New(templateParamsIsRequiredErrMes)
 	ErrInternalCouriorProviderError = errors.New(couriorProviderErrMsg)
@@ -40,22 +35,26 @@ var (
 	ErrWrongApiKey                  = errors.New(wrongApiKeyErrMsg)
 	ErrTemplateProviderNotDefined   = errors.New(templateProviderNotDefinedErrMsg)
 	ErrDeviceInfoNotFound           = errors.New(deviceInfoNotfoundErrMsg)
-	ErrUserIsNotInWhiteList         = errors.New(userIsNotInWhiteListMsg)
 	ErrExpiryDateTime               = errors.New(expiryDateTimeErrMsg)
-	ErrExpiryReached                = errors.New(expiryReachedErrMsg)
 	ErrPushCouriorNotfound          = errors.New(pushCouriorNotFoundErrMsg)
 	ErrCouriorNotFound              = errors.New(couriorNotFoundErrMsg)
-	ErrBackOffRetry                 = errors.New(backOffRetryErrMsg)
 	ErrWrongStatus                  = errors.New(wrongStatus)
 )
 
 const (
-	validationErrMsg     = "body request is not valid"
-	internalServerErrMsg = "internal server error"
+	validationErrMsg       = "body request is not valid"
+	internalServerErrMsg   = "internal server error"
+	backOffRetryErrMsg     = "backoff from retrying"
+	expiryReachedErrMsg    = "courior start date expires"
+	providerNotFoundErrMsg = "provider not found"
 )
 
 var (
-	ErrValidation         = errors.New(validationErrMsg)
+	ErrValidation       = errors.New(validationErrMsg)
+	ErrBackOffRetry     = errors.New(backOffRetryErrMsg)
+	ErrExpiryReached    = errors.New(expiryReachedErrMsg)
+	ErrProviderNotFound = errors.New(providerNotFoundErrMsg)
+
 	ErrValidationCode     = http.StatusBadRequest
 	ErrInternalServer     = errors.New(internalServerErrMsg)
 	ErrInternalServerCode = http.StatusInternalServerError

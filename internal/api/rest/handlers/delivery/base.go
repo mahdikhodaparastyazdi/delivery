@@ -4,12 +4,13 @@ import (
 	"context"
 	"delivery/internal/api/rest/requests"
 	"delivery/internal/api/rest/transformer"
+	"time"
 
 	response_formatter "delivery/pkg/response_formatter"
 )
 
 type deliveryServiceInterface interface {
-	SendCourior(ctx context.Context, msg requests.SendCouriorRequest) error
+	SendCourior(ctx context.Context, msg requests.SendCouriorRequest, now time.Time) error
 	ReceiveCouriorStatus(ctx context.Context, msg requests.CouriorStatusRequest) error
 }
 
