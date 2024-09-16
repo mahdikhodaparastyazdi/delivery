@@ -57,14 +57,13 @@ func (cmd Server) main(ctx context.Context, cfg *config.Config) {
 		cmd.logger.Fatal(fmt.Errorf("mysql migration failed: %w", err))
 	}
 
-	deliveryRepo := repositories.NewCouriorRepository(gormDB)
 	clientRepo := repositories.NewClientRepository(gormDB)
 
 	clientService := clientservice.New(clientRepo)
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
 	Queue3PL := send_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
 	QueueCore := received_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
-	deliveryService := delivery_service.New(deliveryRepo, Queue3PL, QueueCore)
+	deliveryService := delivery_service.New(Queue3PL, QueueCore)
 
 	deliverTr := transformer.NewDeliveryTransformer()
 

@@ -10,31 +10,27 @@ import (
 )
 
 type Resolver struct {
-	appEnv config.AppEnv
+	cfg    config.Config
 	logger log.Logger
 }
 
-func NewResolver(appEnv config.AppEnv, logger log.Logger) Resolver {
+func NewResolver(cfg config.Config, logger log.Logger) Resolver {
 	return Resolver{
-		appEnv: appEnv,
+		cfg:    cfg,
 		logger: logger,
 	}
 }
 
-func (r Resolver) ResolveCouriorProvider(providerName string) (couriorproviders.CouriorSender, error) {
-	var (
-		err    error
-		driver couriorproviders.CouriorSender
-	)
-
+func (r Resolver) ResolveCouriorProvider(providerName string) couriorproviders.CouriorSender {
+	var driver couriorproviders.CouriorSender
 	switch providerName {
 	case constants.COURIOR_PROVIDER1:
-		driver = provider1.NewProvider1()
+		driver = provider1.NewProvider1(r.cfg.CouriorBaseUrl, r.cfg.APIKey3PL, r.logger)
 	case constants.COURIOR_PROVIDER2:
 		driver = provider2.NewProvider2()
 	default:
-		err = constants.ErrProviderNotFound
+		driver = provider1.NewProvider1(r.cfg.CouriorBaseUrl, r.cfg.APIKey3PL, r.logger)
 	}
 
-	return driver, err
+	return driver
 }

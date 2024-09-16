@@ -2,14 +2,15 @@ package repositories
 
 import (
 	"context"
-	"delivery/internal/api/rest/requests"
+	"delivery/internal/constants"
 	"delivery/internal/domain"
 )
 
 type DeliveryRepository interface {
-	Create(ctx context.Context, courior domain.COURIOR) (domain.COURIOR, error)
-	SendCourior(ctx context.Context, msg requests.SendCouriorRequest) error
-	ReceiveCouriorStatus(ctx context.Context, msg requests.CouriorStatusRequest) error
+	UpdateCouriorStatus(ctx context.Context,
+		couriorId uint,
+		status constants.CouriorStatus) error
+	Create(c context.Context, courior domain.COURIOR) (domain.COURIOR, error)
 }
 
 type ClientRepository interface {

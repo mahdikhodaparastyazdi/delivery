@@ -63,17 +63,19 @@ func (cmd Consumer) couriorConsumer(ctx context.Context, cfg *config.Config) {
 		return
 	}
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
-	Queue3PL := send_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	Queue3PL := send_tasks.NewQueue3PL(asynqClient,
+		cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
 
-	_ = repositories.NewCouriorRepository(gormDB)
+	courRepo := repositories.NewCouriorRepository(gormDB)
 	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:courior:provider-resolver")
-	resolver3PL := courior_resolver.NewResolver(cfg.AppEnv, logger)
+	resolver3PL := courior_resolver.NewResolver(*cfg, logger)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:consumer:courior")
-	couriorConsumer := courior_consumer.New(logger, Queue3PL, resolver3PL)
+	couriorConsumer := courior_consumer.New(logger, Queue3PL, resolver3PL, courRepo)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:courior:asynq-courior-server")
-	server := asynq.NewServer(logger, cfg.Database.Redis, constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
+	server := asynq.NewServer(logger, cfg.Database.Redis,
+		constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:courior:worker")
 	worker := send_tasks.NewWorker(server, couriorConsumer, logger)
@@ -94,18 +96,18 @@ func (cmd Consumer) receiverConsumer(ctx context.Context, cfg *config.Config) {
 		return
 	}
 
-	_ = repositories.NewCouriorRepository(gormDB)
-	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:provider-resolver")
-	_ = courior_resolver.NewResolver(cfg.AppEnv, logger)
+	deliverRepo := repositories.NewCouriorRepository(gormDB)
 
 	asynqClient := asynq.NewClient(cfg.Database.Redis)
-	QueueCore := received_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
-
-	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:consumer:receiver")
-	receiverConsumer := receiver_consumer.New(logger, QueueCore)
+	QueueCore := received_tasks.NewQueue3PL(asynqClient,
+		cfg.CouriorConsumer.AsynqLowMaxRetry,
+		cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:consumer:receiver")
+	receiverConsumer := receiver_consumer.New(logger, QueueCore, deliverRepo, cfg.CoreBaseUrl, cfg.APIKeyCore)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:asynq-receiver-server")
-	server := asynq.NewServer(logger, cfg.Database.Redis, constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
+	server := asynq.NewServer(logger, cfg.Database.Redis,
+		constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:worker")
 	worker := receive_tasks.NewWorker(server, receiverConsumer, logger)

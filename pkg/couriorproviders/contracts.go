@@ -1,5 +1,10 @@
 package couriorproviders
 
+import (
+	"bytes"
+	"context"
+)
+
 type CouriorSender interface {
-	SendCourior() error
+	SendCourior(ctx context.Context, path string, buf *bytes.Buffer) error
 }

@@ -38,6 +38,8 @@ func Load() (*Config, error) {
 			Host: loadString("API_HTTP_HOST"),
 			Port: loadInt("API_HTTP_PORT"),
 		},
+		APIKeyCore: loadString("APIKEY_CORE"),
+		APIKey3PL:  loadString("APIKEY_3PL"),
 		Database: Database{
 			MySQL: mysql.Config{
 				Host:         loadString("MYSQL_HOST"),

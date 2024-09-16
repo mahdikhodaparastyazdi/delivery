@@ -1,9 +1,14 @@
 package constants
 
-const (
-	COURIOR_STATUS_PENDING = "pending"
-	COURIOR_STATUS_SENT    = "sent"
-	COURIOR_STATUS_FAIL    = "fail"
+type CouriorStatus string
 
-	COURIOR_TYPE_COURIOR = "COURIOR"
+const (
+	COURIOR_STATUS_PENDING       CouriorStatus = "pending"
+	COURIOR_STATUS_ASSIGNED      CouriorStatus = "assigned"
+	COURIOR_STATUS_DELIVERED     CouriorStatus = "deliverd"
+	COURIOR_STATUS_NOT_AVAILABLE CouriorStatus = "not_available"
 )
+
+func (n CouriorStatus) String() string {
+	return string(n)
+}

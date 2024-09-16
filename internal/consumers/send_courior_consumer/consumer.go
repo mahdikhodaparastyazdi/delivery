@@ -1,10 +1,13 @@
 package courior_consumer
 
 import (
+	"bytes"
 	"context"
 	"delivery/internal/constants"
+	"delivery/internal/domain"
 	"delivery/internal/dto"
 	"delivery/internal/services/delivery"
+	"encoding/json"
 	"time"
 )
 
@@ -22,10 +25,24 @@ func (c Consumer) Consume(ctx context.Context, message dto.SendCourior, retry, m
 		}
 		return constants.ErrBackOffRetry
 	}
-	provider, err := c.resolver.ResolveCouriorProvider(constants.COURIOR_PROVIDER1)
-	if err != nil {
-		return constants.ErrProviderNotFound
+	couriorDomain := domain.COURIOR{
+		ProductID:           message.ProductID,
+		UserID:              message.UserID,
+		SourceLocation:      message.SourceLocation,
+		DestinationLocation: message.DestinationLocation,
+		Status:              constants.COURIOR_STATUS_PENDING,
+		StartTime:           message.StartTime,
 	}
-	// TODO: insert row in courior table and send it
-	return provider.SendCourior()
+	courior, err := c.couriorRepo.Create(ctx, couriorDomain)
+	if err != nil {
+		return err
+	}
+	// TODO: selecting provider(3PL) can be conditional
+	provider := c.resolver.ResolveCouriorProvider(constants.COURIOR_PROVIDER1)
+	var bodyB = new(bytes.Buffer)
+	err = json.NewEncoder(bodyB).Encode(courior)
+	if err != nil {
+		return constants.ErrUnexpected
+	}
+	return provider.SendCourior(ctx, "/courior", bodyB)
 }

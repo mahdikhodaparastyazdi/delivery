@@ -38,6 +38,8 @@ type (
 		CouriorBaseUrl  string
 		Tz              string
 		CouriorConsumer CouriorConsumer
+		APIKeyCore      string
+		APIKey3PL       string
 	}
 
 	HTTP struct {
