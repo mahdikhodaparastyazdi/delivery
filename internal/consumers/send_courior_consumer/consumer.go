@@ -26,5 +26,6 @@ func (c Consumer) Consume(ctx context.Context, message dto.SendCourior, retry, m
 	if err != nil {
 		return constants.ErrProviderNotFound
 	}
+	// TODO: insert row in courior table and send it
 	return provider.SendCourior()
 }

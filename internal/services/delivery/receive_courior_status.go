@@ -11,5 +11,5 @@ func (s Service) ReceiveCouriorStatus(ctx context.Context, msg requests.CouriorS
 		CouriorId: msg.CouriorId,
 		Status:    msg.Status,
 	}
-	return s.queueCore.Enqueue(dtoMessage)
+	return s.queueCore.Enqueue(dtoMessage, nil)
 }

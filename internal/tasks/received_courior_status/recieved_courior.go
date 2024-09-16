@@ -37,14 +37,15 @@ func NewQueue3PL(c *asynq.Client, maxRetry int, timout time.Duration) *Queue {
 	}
 }
 
-func (q *Queue) Enqueue(msg dto.RecievedStatus) error {
+func (q Queue) Enqueue(msg dto.RecievedStatus, processAt *time.Time) error {
 	t, err := NewTask(msg, q.maxRetry, q.timeout)
 	if err != nil {
 		return fmt.Errorf("failed to create task: %w", err)
 	}
-	_, err = q.client.Enqueue(t, asynq.Queue(constants.RECEIVED_COURIOR))
-	if err != nil {
-		return fmt.Errorf("asynq enqueue failed: %w", err)
+	if processAt == nil {
+		_, err = q.client.Enqueue(t, asynq.Queue(constants.RECEIVED_COURIOR))
+	} else {
+		_, err = q.client.Enqueue(t, asynq.ProcessAt(*processAt), asynq.Queue(constants.RECEIVED_COURIOR))
 	}
 	return nil
 }
@@ -84,7 +85,6 @@ func (w *Worker) HandleTask(ctx context.Context, t *asynq.Task) error {
 	}
 	if err := w.consumer.Consume(ctx, p, retry, maxRetry); err != nil {
 		if errors.Is(err, constants.ErrExpiryReached) ||
-			errors.Is(err, constants.ErrWrongStatus) ||
 			errors.Is(err, constants.ErrBackOffRetry) {
 			return nil
 		}

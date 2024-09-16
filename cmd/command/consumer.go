@@ -9,7 +9,9 @@ import (
 	courior_resolver "delivery/internal/factories/courior_resolver"
 	"delivery/internal/repositories"
 	receive_tasks "delivery/internal/tasks/received_courior_status"
+	received_tasks "delivery/internal/tasks/received_courior_status"
 	send_tasks "delivery/internal/tasks/send_courior"
+
 	"delivery/pkg/asynq"
 
 	log "delivery/pkg/logger"
@@ -96,8 +98,11 @@ func (cmd Consumer) receiverConsumer(ctx context.Context, cfg *config.Config) {
 	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:provider-resolver")
 	_ = courior_resolver.NewResolver(cfg.AppEnv, logger)
 
+	asynqClient := asynq.NewClient(cfg.Database.Redis)
+	QueueCore := received_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
+
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:consumer:receiver")
-	receiverConsumer := receiver_consumer.New(logger)
+	receiverConsumer := receiver_consumer.New(logger, QueueCore)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:asynq-receiver-server")
 	server := asynq.NewServer(logger, cfg.Database.Redis, constants.SEND_COURIOR, cfg.CouriorConsumer.AsynqHighWorkerCount)
