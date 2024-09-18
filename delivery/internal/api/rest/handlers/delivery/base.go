@@ -10,7 +10,7 @@ import (
 )
 
 type deliveryServiceInterface interface {
-	SendCourior(ctx context.Context, msg requests.SendCouriorRequest, couriorTimeSend time.Time) error
+	SendCourior(ctx context.Context, msg requests.SendCouriorRequest, now time.Time) error
 	ReceiveCouriorStatus(ctx context.Context, msg requests.CouriorStatusRequest) error
 }
 

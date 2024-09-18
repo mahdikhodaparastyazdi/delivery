@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type COURIOR struct {
+type Delivery struct {
 	ID                  uint
 	ProductID           uint
 	CouriorID           uint
@@ -16,4 +16,5 @@ type COURIOR struct {
 	Status              constants.CouriorStatus
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
+	ProcessAt           time.Time
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type CouriorStatusRequest struct {
-	CouriorId uint                    `json:"courior_id" validate:"required"`
+	DeliverId uint                    `json:"deliver_id" validate:"required"`
 	Status    constants.CouriorStatus `json:"status" validate:"required"`
 }
 

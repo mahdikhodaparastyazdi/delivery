@@ -11,9 +11,8 @@ type SendCourior struct {
 	SourceLocation      string    `json:"source_location" validate:"required"`
 	DestinationLocation string    `json:"destination_location" validate:"required"`
 	StartTime           time.Time `json:"start_time" validate:"required"`
-	ProcessAt           time.Time `json:"process_at"`
 }
 type RecievedStatus struct {
-	CouriorId uint                    `json:"courior_id" validate:"required"`
-	Status    constants.CouriorStatus `json:"status" validate:"required"`
+	DeliveryID uint                    `json:"courior_id" validate:"required"`
+	Status     constants.CouriorStatus `json:"status" validate:"required"`
 }

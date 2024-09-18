@@ -12,18 +12,18 @@ import (
 )
 
 func (c Consumer) Consume(ctx context.Context, message dto.SendCourior, retry, maxRetry int) error {
-	if time.Now().After(message.ProcessAt.Add(time.Hour * 1)) {
+	if time.Now().After(message.StartTime.Add(time.Hour * 2)) {
 		return constants.ErrExpiryReached
 	}
 	if retry > maxRetry {
-		nextTime := message.StartTime.Add(5 * time.Minute)
+		nextTime := time.Now().Add(5 * time.Minute)
 		err := c.queue3PL.Enqueue(message, &nextTime)
 		if err != nil {
 			return err
 		}
 		return constants.ErrBackOffRetry
 	}
-	couriorDomain := domain.COURIOR{
+	couriorDomain := domain.Delivery{
 		ProductID:           message.ProductID,
 		UserID:              message.UserID,
 		SourceLocation:      message.SourceLocation,
@@ -31,10 +31,11 @@ func (c Consumer) Consume(ctx context.Context, message dto.SendCourior, retry, m
 		Status:              constants.COURIOR_STATUS_PENDING,
 		StartTime:           message.StartTime,
 		CouriorID:           constants.COURIOR_PROVIDER1_ID,
+		ProcessAt:           time.Now(),
 	}
 	courior, err := c.couriorRepo.Create(ctx, couriorDomain)
 
-	// Provider needs to check and ignore repeated data
+	// Provider needs to check and ignore repeated deliverId data
 	if err != nil && !errors.Is(err, constants.ErrAlreadyExist) {
 		return err
 	}

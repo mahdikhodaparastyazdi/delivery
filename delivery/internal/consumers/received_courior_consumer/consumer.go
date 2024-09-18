@@ -25,17 +25,36 @@ func (c Consumer) Consume(ctx context.Context, message dto.RecievedStatus, retry
 		}
 		return constants.ErrBackOffRetry
 	}
-	err := c.couriorRepository.UpdateCouriorStatus(ctx, message.CouriorId, message.Status)
+	err := c.couriorRepository.UpdateCouriorStatus(ctx, message.DeliveryID, message.Status)
 	if err != nil {
 		return err
 	}
 	var bodyB = new(bytes.Buffer)
-	err = json.NewEncoder(bodyB).Encode(message)
-	if err != nil {
+	if err = json.NewEncoder(bodyB).Encode(message); err != nil {
 		return constants.ErrUnexpected
 	}
-	return c.requestCore(ctx, "/webhook", bodyB)
+	if err = c.requestCore(ctx, "/webhook", bodyB); err != nil {
+		return err
+	}
+
+	if message.Status != constants.COURIOR_STATUS_NOT_AVAILABLE {
+		return nil
+	}
+
+	delivery, err := c.couriorRepository.GetById(ctx, message.DeliveryID)
+	if err != nil {
+		return err
+	}
+	couriorMsg := dto.SendCourior{
+		ProductID:           delivery.CouriorID,
+		UserID:              delivery.UserID,
+		SourceLocation:      delivery.SourceLocation,
+		DestinationLocation: delivery.DestinationLocation,
+		StartTime:           delivery.StartTime,
+	}
+	return c.queue3PL.Enqueue(couriorMsg, nil)
 }
+
 func (c Consumer) requestCore(ctx context.Context, path string, buf *bytes.Buffer) error {
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseUrlCore+path, buf)
 	if err != nil {

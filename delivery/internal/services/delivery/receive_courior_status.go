@@ -8,8 +8,8 @@ import (
 
 func (s Service) ReceiveCouriorStatus(ctx context.Context, msg requests.CouriorStatusRequest) error {
 	var dtoMessage = dto.RecievedStatus{
-		CouriorId: msg.CouriorId,
-		Status:    msg.Status,
+		DeliveryID: msg.DeliverId,
+		Status:     msg.Status,
 	}
 	return s.queueCore.Enqueue(dtoMessage, nil)
 }

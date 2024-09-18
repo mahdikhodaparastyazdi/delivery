@@ -102,8 +102,10 @@ func (cmd Consumer) receiverConsumer(ctx context.Context, cfg *config.Config) {
 	QueueCore := received_tasks.NewQueue3PL(asynqClient,
 		cfg.CouriorConsumer.AsynqLowMaxRetry,
 		cfg.CouriorConsumer.AsynqTimeoutSeconds)
+	Queue3PL := send_tasks.NewQueue3PL(asynqClient, cfg.CouriorConsumer.AsynqLowMaxRetry, cfg.CouriorConsumer.AsynqTimeoutSeconds)
 	logger := shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:consumer:receiver")
-	receiverConsumer := receiver_consumer.New(logger, QueueCore, deliverRepo, cfg.CoreBaseUrl, cfg.APIKeyCore)
+	receiverConsumer := receiver_consumer.New(logger, QueueCore, Queue3PL,
+		deliverRepo, cfg.CoreBaseUrl, cfg.APIKeyCore)
 
 	logger = shoplog.NewStdOutLogger(cfg.LogLevel, "delivery:receiver:asynq-receiver-server")
 	server := asynq.NewServer(logger, cfg.Database.Redis,

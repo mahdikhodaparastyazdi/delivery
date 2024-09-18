@@ -11,7 +11,7 @@ import (
 )
 
 type couriorRepository interface {
-	Create(c context.Context, courior domain.COURIOR) (domain.COURIOR, error)
+	Create(c context.Context, courior domain.Delivery) (domain.Delivery, error)
 }
 type queue3PL interface {
 	Enqueue(msg dto.SendCourior, processAt *time.Time) error

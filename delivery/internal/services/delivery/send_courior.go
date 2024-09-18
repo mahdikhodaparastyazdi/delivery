@@ -7,18 +7,19 @@ import (
 	"time"
 )
 
-func (s Service) SendCourior(ctx context.Context, msg requests.SendCouriorRequest, couriorSendTime time.Time) error {
-	processTime := couriorSendTime.Add(-time.Hour * 1)
+func (s Service) SendCourior(ctx context.Context,
+	msg requests.SendCouriorRequest,
+	now time.Time) error {
 	var dtoMessage = dto.SendCourior{
 		ProductID:           msg.ProductID,
 		UserID:              msg.UserID,
 		SourceLocation:      msg.SourceLocation,
 		DestinationLocation: msg.DestinationLocation,
 		StartTime:           msg.StartTime,
-		ProcessAt:           processTime,
 	}
-	if msg.StartTime.Before(couriorSendTime.Add(time.Hour * 2)) {
+	if msg.StartTime.Before(now.Add(time.Hour * 1)) {
 		return s.queue3PL.Enqueue(dtoMessage, nil)
 	}
+	processTime := dtoMessage.StartTime.Add(time.Hour * 1)
 	return s.queue3PL.Enqueue(dtoMessage, &processTime)
 }

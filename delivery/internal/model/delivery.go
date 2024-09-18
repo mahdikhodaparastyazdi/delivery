@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type COURIOR struct {
+type Delivery struct {
 	ID                  uint                    `gorm:"column:id"`
 	CouriorID           uint                    `gorm:"column:corior_id"`
 	ProductID           uint                    `gorm:"column:product_id"`
@@ -19,12 +19,12 @@ type COURIOR struct {
 	UpdatedAt           time.Time               `gorm:"column:updated_at"`
 }
 
-func (s COURIOR) TableName() string {
-	return "courior"
+func (s Delivery) TableName() string {
+	return "delivery"
 }
 
-func (s COURIOR) ToDomain() domain.COURIOR {
-	return domain.COURIOR{
+func (s Delivery) ToDomain() domain.Delivery {
+	return domain.Delivery{
 		ID:                  s.ID,
 		ProductID:           s.ProductID,
 		UserID:              s.UserID,

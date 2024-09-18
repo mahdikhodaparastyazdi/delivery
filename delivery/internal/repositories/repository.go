@@ -10,7 +10,8 @@ type DeliveryRepository interface {
 	UpdateCouriorStatus(ctx context.Context,
 		couriorId uint,
 		status constants.CouriorStatus) error
-	Create(c context.Context, courior domain.COURIOR) (domain.COURIOR, error)
+	Create(c context.Context, courior domain.Delivery) (domain.Delivery, error)
+	GetById(ctx context.Context, deliveryID uint) (domain.Delivery, error)
 }
 
 type ClientRepository interface {
